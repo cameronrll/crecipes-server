@@ -1,0 +1,79 @@
+
+type Query {
+  getAllRecipes: [Recipe]
+  getRecipe(id: String!): Recipe
+}
+
+type Mutation {
+  createRecipe(createDto: RecipeCreate!): Recipe
+  updateRecipe(id: String!, updateDto: RecipeUpdate!): Recipe
+  deleteRecipe(id: String!): Recipe
+  upVoteRecipe(id: String!): Recipe
+  downVoteRecipe(id: String!): Recipe
+}
+
+type Subscription {
+  subAllRecipes: RecipeSub
+}
+
+type Recipe {
+  id: String!
+  creator: String!
+  title: String!
+  recipeDescription: String!
+  ingredients: [RecipeIngredient!]!
+  upVotes: Number!
+  downVotes: Number!
+  createdAt: String
+  updatedAt: String
+}
+
+type RecipeIngredient {
+  name: String!
+  amount: String
+  measurement: RecipeIngredientMeasurementType
+}
+
+type RecipeSub {
+  recipie: Recipe!
+  mutationStatus: MutationStatus!
+}
+
+enum RecipeIngredientMeasurementType {
+  gms
+  mls
+  ls
+  lbs
+  cups
+}
+
+enum MutationStatus {
+  CREATED
+  UPDATED
+  DELETED
+}
+
+input RecipeCreate {
+  creator: String!
+  title: String!
+  recipeDescription: String!
+  ingredients: [RecipeIngredientCreate!]!
+}
+
+input RecipeIngredientCreate {
+  name: String!
+  amount: String
+  measurement: RecipeIngredientMeasurementType
+}
+
+input RecipeUpdate {
+  title: String
+  recipeDescription: String
+  ingredients: [RecipeIngredientUpdate]
+}
+
+input RecipeIngredientUpdate {
+  name: String
+  amount: String
+  measurement: RecipeIngredientMeasurementType
+}

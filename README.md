@@ -1,1 +1,1 @@
-# Crecipies Server - Crowdsourced Recipies
+# Crecipes Server - Crowdsourced Recipes

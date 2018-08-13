@@ -10,11 +10,13 @@ import {GraphQLFactory, GraphQLModule} from "@nestjs/graphql";
 import {SubscriptionsService} from "./subscriptions/subscriptions.service";
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
 import {RecipesModule} from "./recipes/recipes.module";
+import {CommentsModule} from "./comments/comments.module";
 
 @Module({
   imports: [
     SubscriptionsModule.forRoot(),
     RecipesModule,
+    CommentsModule,
     GraphQLModule,
     MongooseModule.forRoot('mongodb://localhost:27017/crecipes'),
   ],

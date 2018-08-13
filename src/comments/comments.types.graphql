@@ -1,0 +1,33 @@
+
+type Query {
+  getComments(recipeId: String): [Comment]
+}
+
+type Mutation {
+  createComment(createDto: CommentCreate!): Comment
+  deleteComment(id: String!): Comment
+}
+
+type Subscription {
+  subComments(recipeId: String): CommentSub
+}
+
+type Comment {
+  _id: String!
+  recipeId: String!
+  username: String!
+  comment: String!
+  createdAt: String
+  updatedAt: String
+}
+
+type CommentSub {
+  comment: Comment!
+  mutationStatus: MutationStatus!
+}
+
+input CommentCreate {
+  recipeId: String!
+  username: String!
+  comment: String!
+}

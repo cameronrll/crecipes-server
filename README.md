@@ -1,1 +1,1 @@
-# Crecipies - Crowdsourced Recipies
+# Crecipies Server - Crowdsourced Recipies

@@ -22,8 +22,8 @@ type Recipe {
   title: String!
   recipeDescription: String!
   ingredients: [RecipeIngredient!]!
-  upVotes: Number!
-  downVotes: Number!
+  upVotes: Int!
+  downVotes: Int!
   createdAt: String
   updatedAt: String
 }

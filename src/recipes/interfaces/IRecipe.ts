@@ -1,6 +1,6 @@
 
 export interface IRecipe {
-  id: string;
+  _id: string;
   creator: string;
   title: string;
   recipeDescription: string;

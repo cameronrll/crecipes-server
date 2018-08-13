@@ -1,5 +1,5 @@
-import {DynamicModule, Module} from "@nestjs/common";
-import {SubscriptionsService} from "./subscriptions.service";
+import { Module, DynamicModule } from '@nestjs/common';
+import { SubscriptionsService } from './subscriptions.service';
 import {createSubscriptionProviders} from "./subscriptions.providers";
 
 @Module({
@@ -12,7 +12,7 @@ export class SubscriptionsModule {
     return {
       module: SubscriptionsModule,
       providers: [...providers],
-      exports: [...providers]
+      exports: [...providers],
     };
   }
 }

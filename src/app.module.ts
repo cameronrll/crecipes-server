@@ -1,18 +1,25 @@
-import {MiddlewareConsumer, Module} from "@nestjs/common";
+import {
+  Module,
+  MiddlewareConsumer,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import {MongooseModule} from "@nestjs/mongoose";
 import {SubscriptionsModule} from "./subscriptions/subscriptions.module";
 import {GraphQLFactory, GraphQLModule} from "@nestjs/graphql";
 import {SubscriptionsService} from "./subscriptions/subscriptions.service";
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
+import {RecipesModule} from "./recipes/recipes.module";
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost:27017/crecipies'),
     SubscriptionsModule.forRoot(),
+    RecipesModule,
     GraphQLModule,
+    MongooseModule.forRoot('mongodb://localhost:27017/crecipes'),
   ],
 })
-export class AppModule {
+export class AppModule implements NestModule{
   constructor(
     private readonly subscriptionsService: SubscriptionsService,
     private readonly graphQLFactory: GraphQLFactory,
@@ -26,7 +33,7 @@ export class AppModule {
       .apply(
         graphiqlExpress({
           endpointURL: '/graphql',
-          subscriptionsEndpoint: 'ws://localhost:3001/subscriptions',
+          subscriptionsEndpoint: `ws://localhost:3001/subscriptions`,
         }),
       )
       .forRoutes('/graphiql')

@@ -1,9 +1,7 @@
-import {Mutation, Query, Resolver, Subscription} from "@nestjs/graphql";
+import {Mutation, Query, Resolver, DelegateProperty, Subscription} from "@nestjs/graphql";
 import {RecipesService} from "./recipes.service";
 import {IRecipe} from "./interfaces/IRecipe";
-import {CreateRecipeDto} from "./dtos/create-recipe.dto";
-import {UpdateRecipeDto} from "./dtos/update-recipe.dto";
-import { PubSub } from 'graphql-subscriptions';
+import { PubSub, withFilter } from 'graphql-subscriptions';
 import {RECIPE_MUTATION_STATES} from "./recipe.constants";
 import {MUTATION_STATUS} from "../subscriptions/subscription.constants";
 
@@ -19,12 +17,14 @@ export class RecipesResolvers {
   }
 
   @Query('getRecipe')
-  async getRecipe(id: string): Promise<IRecipe> {
-    return await this.recipesService.get(id);
+  async getRecipe(obj, args, context, info): Promise<IRecipe> {
+    const {_id} = args;
+    return await this.recipesService.get(_id);
   }
 
   @Mutation('createRecipe')
-  async createRecipe(createDto: CreateRecipeDto): Promise<IRecipe> {
+  async createRecipe(obj, args, context, info): Promise<IRecipe> {
+    const {createDto} = args;
     const recipeCreated = await this.recipesService.create(createDto);
     pubSub.publish(RECIPE_MUTATION_STATES.CREATED, {
       recipe: recipeCreated,
@@ -34,8 +34,9 @@ export class RecipesResolvers {
   }
 
   @Mutation('updateRecipe')
-  async updateRecipe(id: string, updateDto: UpdateRecipeDto): Promise<IRecipe> {
-    const recipeUpdated = await this.recipesService.update(id, updateDto);
+  async updateRecipe(obj, args, context, info): Promise<IRecipe> {
+    const {_id, updateDto} = args;
+    const recipeUpdated = await this.recipesService.update(_id, updateDto);
     pubSub.publish(RECIPE_MUTATION_STATES.UPDATED, {
       recipe: recipeUpdated,
       mutationStatus: MUTATION_STATUS.UPDATED,
@@ -44,8 +45,9 @@ export class RecipesResolvers {
   }
 
   @Mutation('deleteRecipe')
-  async deleteRecipe(id: string): Promise<IRecipe> {
-    const recipeDeleted = await this.recipesService.delete(id);
+  async deleteRecipe(obj, args, context, info): Promise<IRecipe> {
+    const {_id} = args;
+    const recipeDeleted = await this.recipesService.delete(_id);
     pubSub.publish(RECIPE_MUTATION_STATES.DELETED, {
       recipe: recipeDeleted,
       mutationStatus: MUTATION_STATUS.DELETED,
@@ -54,8 +56,9 @@ export class RecipesResolvers {
   }
 
   @Mutation('upVoteRecipe')
-  async upVoteRecipe(id: string): Promise<IRecipe> {
-    const recipeUpVoted = await this.recipesService.upVote(id);
+  async upVoteRecipe(obj, args, context, info): Promise<IRecipe> {
+    const {_id} = args;
+    const recipeUpVoted = await this.recipesService.upVote(_id);
     pubSub.publish(RECIPE_MUTATION_STATES.UPDATED, {
       recipe: recipeUpVoted,
       mutationStatus: MUTATION_STATUS.UPDATED,
@@ -64,8 +67,9 @@ export class RecipesResolvers {
   }
 
   @Mutation('downVoteRecipe')
-  async downVoteRecipe(id: string): Promise<IRecipe> {
-    const recipeDownVoted = await this.recipesService.downVote(id);
+  async downVoteRecipe(obj, args, context, info): Promise<IRecipe> {
+    const {_id} = args;
+    const recipeDownVoted = await this.recipesService.downVote(_id);
     pubSub.publish(RECIPE_MUTATION_STATES.UPDATED, {
       recipe: recipeDownVoted,
       mutationStatus: MUTATION_STATUS.UPDATED,
@@ -76,11 +80,19 @@ export class RecipesResolvers {
   @Subscription('subAllRecipes')
   subAllRecipes() {
     return {
-      subscribe: () => pubSub.asyncIterator([
-        RECIPE_MUTATION_STATES.CREATED,
-        RECIPE_MUTATION_STATES.UPDATED,
-        RECIPE_MUTATION_STATES.DELETED
-      ])
+      subscribe: withFilter(
+        () => pubSub.asyncIterator([
+          RECIPE_MUTATION_STATES.CREATED,
+          RECIPE_MUTATION_STATES.UPDATED,
+          RECIPE_MUTATION_STATES.DELETED
+        ]),
+        (payload, variables) => {
+          return true
+        }
+      ),
+      resolve: (payload, args, context) => {
+        return payload;
+      }
     };
   }
 }

@@ -1,15 +1,15 @@
 
 type Query {
   getAllRecipes: [Recipe]
-  getRecipe(id: String!): Recipe
+  getRecipe(_id: String!): Recipe
 }
 
 type Mutation {
   createRecipe(createDto: RecipeCreate!): Recipe
-  updateRecipe(id: String!, updateDto: RecipeUpdate!): Recipe
-  deleteRecipe(id: String!): Recipe
-  upVoteRecipe(id: String!): Recipe
-  downVoteRecipe(id: String!): Recipe
+  updateRecipe(_id: String!, updateDto: RecipeUpdate!): Recipe
+  deleteRecipe(_id: String!): Recipe
+  upVoteRecipe(_id: String!): Recipe
+  downVoteRecipe(_id: String!): Recipe
 }
 
 type Subscription {
@@ -17,7 +17,7 @@ type Subscription {
 }
 
 type Recipe {
-  id: String!
+  _id: String!
   creator: String!
   title: String!
   recipeDescription: String!
@@ -35,7 +35,7 @@ type RecipeIngredient {
 }
 
 type RecipeSub {
-  recipie: Recipe!
+  recipe: Recipe!
   mutationStatus: MutationStatus!
 }
 

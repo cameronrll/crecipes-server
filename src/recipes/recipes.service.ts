@@ -1,38 +1,67 @@
 import { Model } from 'mongoose';
-import {Inject, Injectable} from "@nestjs/common";
+import {Injectable} from "@nestjs/common";
 import {IRecipe} from "./interfaces/IRecipe";
 import {CreateRecipeDto} from "./dtos/create-recipe.dto";
 import {UpdateRecipeDto} from "./dtos/update-recipe.dto";
+import {InjectModel} from "@nestjs/mongoose";
 
 @Injectable()
 export class RecipesService {
-  constructor(@Inject('RecipeModelToken') private readonly recipeModel: Model<IRecipe>) {}
+  constructor(@InjectModel('recipes') private readonly recipeModel: Model<IRecipe>) {}
 
   async getAll(): Promise<Array<IRecipe>> {
-    return <any>{};
+    return await this.recipeModel.find({});
   }
 
-  async get(id: string): Promise<IRecipe> {
-    return <any>{};
+  async get(_id: string): Promise<IRecipe> {
+    return await this.recipeModel.findById(_id);
   }
 
   async create(createDto: CreateRecipeDto): Promise<IRecipe> {
-    return <any>{};
+    const createdRecipe = new this.recipeModel(createDto);
+    return await createdRecipe.save();
   }
 
-  async update(id: string, updateDto: UpdateRecipeDto): Promise<IRecipe> {
-    return <any>{};
+  async update(_id: string, updateDto: UpdateRecipeDto): Promise<IRecipe> {
+    return await this.recipeModel.findOneAndUpdate(
+      {_id: _id},
+      updateDto,
+      {
+        new: true,
+        upsert: true
+      }
+    );
   }
 
-  async delete(id: string): Promise<IRecipe> {
-    return <any>{};
+  async delete(_id: string): Promise<IRecipe> {
+    return await this.recipeModel.findOneAndRemove({_id: _id});
   }
 
-  async upVote(id: string): Promise<IRecipe> {
-   return <any>{};
+  async upVote(_id: string): Promise<IRecipe> {
+   return await this.recipeModel.findOneAndUpdate(
+     {_id: _id},
+     {
+       $inc: {
+         upVotes: 1
+       }
+     },
+     {
+       new: true
+     }
+   );
   }
 
-  async downVote(id: string): Promise<IRecipe> {
-    return <any>{};
+  async downVote(_id: string): Promise<IRecipe> {
+    return await this.recipeModel.findOneAndUpdate(
+      {_id: _id},
+      {
+        $inc: {
+          upVotes: -1
+        }
+      },
+      {
+        new: true
+      }
+    );
   }
 }

@@ -9,14 +9,21 @@ export class CommentsService {
   constructor(@InjectModel('comments') private readonly commentModel: Model<IComment>) {}
 
   async getComments(recipeId?: string): Promise<Array<IComment>> {
-    return <any>{};
+    let query = {};
+    if(!!recipeId) {
+      query = {
+        recipeId: recipeId
+      };
+    }
+    return await this.commentModel.find(query);
   }
 
   async create(createDto: CreateCommentDto): Promise<IComment> {
-    return <any>{};
+    const createdComment = new this.commentModel(createDto);
+    return await createdComment.save();
   }
 
   async delete(_id: string): Promise<IComment> {
-    return <any>{};
+    return await this.commentModel.findOneAndRemove({_id: _id});
   }
 }

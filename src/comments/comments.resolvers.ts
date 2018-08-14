@@ -12,7 +12,8 @@ export class CommentsResolvers {
   constructor(private readonly commentsService: CommentsService) {}
 
   @Query()
-  async getComments(recipeId?: string): Promise<Array<IComment>> {
+  async getComments(obj, args, context, info): Promise<Array<IComment>> {
+    const {recipeId} = args;
     return await this.commentsService.getComments(recipeId);
   }
 
@@ -47,8 +48,11 @@ export class CommentsResolvers {
           COMMENT_MUTATION_STATES.UPDATED,
           COMMENT_MUTATION_STATES.DELETED
         ]),
-        (payload, variables) => {
-          // TODO: look for recipe ID variable
+        (payload: {comment: IComment}, variables: {recipeId?: string}) => {
+          const {comment} = payload;
+          if(!!variables.recipeId) {
+            return comment.recipeId === variables.recipeId;
+          }
           return true;
         }
       ),

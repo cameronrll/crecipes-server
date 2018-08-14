@@ -1,0 +1,6 @@
+
+enum MutationStatus {
+  CREATED
+  UPDATED
+  DELETED
+}

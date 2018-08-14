@@ -1,5 +1,5 @@
 {
-  "name": "crecipies-server",
+  "name": "crecipes-server",
   "version": "1.0.0",
   "description": "Crowdsourced recipies server",
   "main": "index.js",

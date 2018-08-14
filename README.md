@@ -12,7 +12,8 @@
 
 ## Samples
 
-1. Create a recipe and view its subscription event (for this you will want two tabs for `locahost:3000/graphiql` open)
+1.  Create a recipe and view its subscription event (for this you will want two tabs for `locahost:3000/graphiql` open)
+2. Add comments to the recipe and view its subscription event
   
   Paste the following into the editor
   
